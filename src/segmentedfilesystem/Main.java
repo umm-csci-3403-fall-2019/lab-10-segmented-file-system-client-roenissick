@@ -12,18 +12,25 @@ public class Main {
     static ArrayList<Byte> fileNumbers = new ArrayList<>();
 
     private static void sortFiles(byte[] data) {
-        if(fileNumbers.get(0) == data[1]) {
-            file1.add(data);
-        }
-        if(fileNumbers.get(1) == data[1]) {
-            file2.add(data);
-        }
-        if(fileNumbers.get(2) == data[1]) {
-            file3.add(data);
-        }
-        else {
-            fileNumbers.add(data[1]);
-            sortFiles(data);
+        if(fileNumbers.size() > 0) {
+
+            if (fileNumbers.get(0) == data[1]) {
+                System.out.println("Adding to file1");
+                file1.add(data);
+            }
+
+            else if (fileNumbers.get(1) == data[1]) {
+                file2.add(data);
+            }
+
+            else if (fileNumbers.get(2) == data[1]) {
+                file3.add(data);
+            }
+
+            else {
+                fileNumbers.add(data[1]);
+                sortFiles(data);
+            }
         }
     }
 
@@ -46,6 +53,7 @@ public class Main {
                     DatagramPacket response = new DatagramPacket(buffer, buffer.length);
                     socket.receive(response);
                     byte[] data = response.getData();
+//                    System.out.println(data[1]);
                     sortFiles(data);
                 }
                 catch (SocketTimeoutException ex) {
@@ -56,11 +64,10 @@ public class Main {
 
         } catch (IOException ex) {
             System.out.println("Client error: " + ex.getMessage());
-            ex.printStackTrace();
+//            ex.printStackTrace();
         }
         System.out.println(file1);
     }
-
 
 }
 
