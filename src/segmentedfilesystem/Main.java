@@ -3,14 +3,13 @@ import java.net.*;
 import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Comparator;
 import java.io.*;
 
 public class Main {
 
-    static File file1 = new File();
-    static File file2 = new File();
-    static File file3 = new File();
+    static dataFile file1 = new dataFile();
+    static dataFile file2 = new dataFile();
+    static dataFile file3 = new dataFile();
 
     static ArrayList<Byte> fileNumbers = new ArrayList<>(3);
 
@@ -18,7 +17,8 @@ public class Main {
         if(fileNumbers.contains(data[1])) {
             if(fileNumbers.get(0) == data[1]) {
                 if(data[0] % 2 == 0) {
-                    byte[] name = Arrays.copyOfRange(data, 3, data.length);
+                    System.out.println("Found header");
+                    byte[] name = Arrays.copyOfRange(data, 2, data.length-1);
                     file1.fileName = new String(name);
                 } else {
                     file1.packets.add(new Packet(data));
@@ -26,7 +26,7 @@ public class Main {
             }
             else if(fileNumbers.get(1) == data[1]) {
                 if(data[0] % 2 == 0) {
-                    byte[] name = Arrays.copyOfRange(data, 3, data.length);
+                    byte[] name = Arrays.copyOfRange(data, 2, data.length);
                     file2.fileName = new String(name);
                 } else {
                     file2.packets.add(new Packet(data));
@@ -34,7 +34,7 @@ public class Main {
             }
             else if(fileNumbers.get(2) == data[1]) {
                 if(data[0] % 2 == 0) {
-                    byte[] name = Arrays.copyOfRange(data, 3, data.length);
+                    byte[] name = Arrays.copyOfRange(data, 2, data.length);
                     file3.fileName = new String(name);
                 } else {
                     file3.packets.add(new Packet(data));
@@ -46,8 +46,25 @@ public class Main {
         }
     }
 
-    private static void sortFiles(ArrayList<byte[]> file) {
+    private static void sortFile(dataFile file) {
 
+    }
+
+    private static void writeFile(dataFile file) {
+        File newFile = new File("../data/" + file.fileName);
+        FileOutputStream os;
+        try {
+            os = new FileOutputStream(newFile);
+            for (int i = 0; i < file.packets.size(); i++) {
+                os.write(file.packets.get(i).data);
+            }
+        }
+        catch (FileNotFoundException e) {
+            System.out.println("File not found" + e);
+        }
+        catch (IOException ioe) {
+            System.out.println("Exception while writing file " + ioe);
+        }
     }
 
     public static void main(String[] args) {
@@ -87,6 +104,8 @@ public class Main {
         System.out.println(file2.packets.size());
         System.out.println(file3.packets.size());
         System.out.println(file1.fileName);
+        System.out.println(file1.packets.get(0).data);
+        writeFile(file1);
     }
 
 }

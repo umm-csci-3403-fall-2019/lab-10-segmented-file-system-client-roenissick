@@ -3,9 +3,9 @@ package segmentedfilesystem;
 import java.util.Arrays;
 
 public class Packet {
-    static int type = -1;
-    static int number = -1;
-    static byte[] data;
+    int type = -1;
+    int number = -1;
+    byte[] data;
 
     public Packet(byte[] packet) {
         type = packet[0];
