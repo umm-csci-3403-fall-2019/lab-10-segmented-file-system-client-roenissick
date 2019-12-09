@@ -4,6 +4,7 @@ import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.io.*;
+import java.util.Collections;
 
 public class Main {
 
@@ -18,7 +19,7 @@ public class Main {
             if(fileNumbers.get(0) == data[1]) {
                 if(data[0] % 2 == 0) {
                     System.out.println("Found header");
-                    byte[] name = Arrays.copyOfRange(data, 2, data.length-1);
+                    byte[] name = Arrays.copyOfRange(data, 2, data.length);
                     file1.fileName = new String(name);
                 } else {
                     file1.packets.add(new Packet(data));
@@ -47,11 +48,11 @@ public class Main {
     }
 
     private static void sortFile(dataFile file) {
-
+        Collections.sort(file.packets);
     }
 
     private static void writeFile(dataFile file) {
-        File newFile = new File("../data/" + file.fileName);
+        File newFile = new File(file.fileName);
         FileOutputStream os;
         try {
             os = new FileOutputStream(newFile);
@@ -83,12 +84,12 @@ public class Main {
             while(true) {
                 try {
 
-                    DatagramPacket response = new DatagramPacket(buffer, buffer.length);
+                    byte[] buf = new byte[1028];
+                    DatagramPacket response = new DatagramPacket(buf, buf.length);
                     socket.receive(response);
+                    int rL = response.getLength();
                     byte[] data = response.getData();
-//                    System.out.println(data[1]);
-                    sortPackets(data);
-
+                    sortPackets(Arrays.copyOfRange(data, 0, rL));
                 }
                 catch (SocketTimeoutException ex) {
                     System.out.println("Timeout error: " + ex.getMessage());
@@ -100,12 +101,20 @@ public class Main {
             System.out.println("Client error: " + ex.getMessage());
 //            ex.printStackTrace();
         }
-        System.out.println(file1.packets.size());
-        System.out.println(file2.packets.size());
-        System.out.println(file3.packets.size());
-        System.out.println(file1.fileName);
-        System.out.println(file1.packets.get(0).data);
+
+//        System.out.println(file1.packets.size());
+//        System.out.println(file2.packets.size());
+//        System.out.println(file3.packets.size());
+//        System.out.println(file1.fileName);
+//        System.out.println(file1.packets.get(0).number);
+//        System.out.println(file1.packets.get(0).data);
+        sortFile(file1);
+        sortFile(file2);
+        sortFile(file3);
         writeFile(file1);
+        System.out.println(file2.fileName);
+        writeFile(file2);
+        writeFile(file3);
     }
 
 }
